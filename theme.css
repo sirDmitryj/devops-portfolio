@@ -242,3 +242,27 @@ dialog::backdrop { background: #06100cd9; }
   .hero-footnote { gap: 6px; }
   .additional-project > div:nth-child(2) { min-width: 185px; }
 }
+
+/* Language switcher */
+.header-controls { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.language-switcher { position: relative; }
+.language-switcher > summary { list-style: none; cursor: pointer; min-height: 40px; min-width: 72px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); color: var(--ink); font: 10px var(--mono); letter-spacing: .4px; user-select: none; transition: background .18s ease, border-color .18s ease, color .18s ease; }
+.language-switcher > summary::-webkit-details-marker { display: none; }
+.language-switcher > summary:hover, .language-switcher[open] > summary { background: var(--pale); color: var(--green); }
+.language-switcher > summary:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+.language-icon { color: var(--green); font-size: 12px; line-height: 1; }
+.language-chevron { color: var(--subtle); font-size: 11px; transition: transform .18s ease; }
+.language-switcher[open] .language-chevron { transform: rotate(180deg); }
+.language-menu { position: absolute; z-index: 80; top: calc(100% + 9px); right: 0; width: 190px; padding: 6px; border: 1px solid var(--line); border-radius: 10px; background: var(--paper); box-shadow: var(--shadow); }
+.language-menu button { width: 100%; min-height: 40px; display: grid; grid-template-columns: 34px 1fr; align-items: center; gap: 8px; padding: 7px 9px; border: 0; border-radius: 7px; background: transparent; color: var(--ink); text-align: left; cursor: pointer; }
+.language-menu button:hover, .language-menu button.active { background: var(--pale); }
+.language-menu button > span { color: var(--green); font: 9px var(--mono); letter-spacing: .7px; }
+.language-menu button > b { font-size: 11px; font-weight: 550; }
+.language-menu button.active > b::after { content: ' ✓'; color: var(--green); }
+
+@media (max-width: 650px) {
+  .header-controls { gap: 6px; }
+  .language-switcher > summary { min-width: 55px; width: 55px; min-height: 42px; padding: 9px 8px; gap: 5px; }
+  .language-icon { display: none; }
+  .language-menu { width: 178px; right: -48px; }
+}

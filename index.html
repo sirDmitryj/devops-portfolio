@@ -17,8 +17,19 @@
       document.documentElement.style.colorScheme = theme;
     })();
   </script>
+  <script id="language-init">
+    (() => {
+      let language = 'en';
+      try {
+        const saved = localStorage.getItem('portfolio-language');
+        if (['en', 'pl', 'ru', 'uk'].includes(saved)) language = saved;
+      } catch (_) {}
+      document.documentElement.lang = language;
+    })();
+  </script>
   <link rel="stylesheet" href="./styles.css">
   <link rel="stylesheet" href="./theme.css">
+  <script src="./i18n.js" defer></script>
   <script src="./app.js" defer></script>
 </head>
 <body>
@@ -27,7 +38,18 @@
     <div class="container header-inner">
       <a class="identity" href="#top" aria-label="Dmytro Poliakov, home"><span class="monogram">dp<span>.</span></span><span class="identity-name">Dmytro Poliakov<span>JUNIOR DEVOPS PORTFOLIO</span></span></a>
       <nav aria-label="Main navigation"><a href="#projects">Projects <span class="nav-count">02</span></a><a href="#about">About me</a><a class="linkedin-nav" href="https://www.linkedin.com/in/dmytro-poliakov-184911276/" target="_blank" rel="noopener noreferrer">LinkedIn <span aria-hidden="true">↗</span></a></nav>
-      <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch to dark theme" aria-pressed="false" title="Switch to dark theme"><svg class="moon-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.1 15.6A8.5 8.5 0 0 1 8.4 3.9 8.5 8.5 0 1 0 20.1 15.6Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><svg class="sun-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.4 1.4m11.2 11.2L19 19M5 19l1.4-1.4M17.6 6.4 19 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span id="theme-label">Dark</span></button>
+      <div class="header-controls">
+        <details class="language-switcher" id="language-switcher">
+          <summary id="language-summary" aria-label="Change language" title="Change language"><span class="language-icon" aria-hidden="true">文</span><span id="language-current">EN</span><span class="language-chevron" aria-hidden="true">⌄</span></summary>
+          <div class="language-menu" role="menu" aria-label="Change language">
+            <button type="button" role="menuitemradio" data-language="en" aria-checked="true"><span>EN</span><b>English</b></button>
+            <button type="button" role="menuitemradio" data-language="pl" aria-checked="false"><span>PL</span><b>Polski</b></button>
+            <button type="button" role="menuitemradio" data-language="ru" aria-checked="false"><span>RU</span><b>Русский</b></button>
+            <button type="button" role="menuitemradio" data-language="uk" aria-checked="false"><span>UA</span><b>Українська</b></button>
+          </div>
+        </details>
+        <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch to dark theme" aria-pressed="false" title="Switch to dark theme"><svg class="moon-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.1 15.6A8.5 8.5 0 0 1 8.4 3.9 8.5 8.5 0 1 0 20.1 15.6Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><svg class="sun-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.4 1.4m11.2 11.2L19 19M5 19l1.4-1.4M17.6 6.4 19 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span id="theme-label">Dark</span></button>
+      </div>
     </div>
   </header>
   <main id="main">

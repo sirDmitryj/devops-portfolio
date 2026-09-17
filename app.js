@@ -1,5 +1,62 @@
 'use strict';
 
+const I18N = window.PORTFOLIO_I18N;
+const originalText = new WeakMap();
+const originalAttributes = new WeakMap();
+let currentLanguage = 'en';
+try {
+  const savedLanguage = localStorage.getItem('portfolio-language');
+  if (I18N.supported.includes(savedLanguage)) currentLanguage = savedLanguage;
+} catch (_) {}
+
+function t(source, language = currentLanguage) {
+  if (!source || language === 'en') return source;
+  return I18N.strings[language]?.[source] ?? source;
+}
+
+function translateTextNode(node) {
+  if (!originalText.has(node)) originalText.set(node, node.nodeValue);
+  const source = originalText.get(node);
+  const trimmed = source.trim();
+  if (!trimmed) return;
+  const leading = source.match(/^\s*/)?.[0] ?? '';
+  const trailing = source.match(/\s*$/)?.[0] ?? '';
+  node.nodeValue = `${leading}${t(trimmed)}${trailing}`;
+}
+
+function translateAttributes(element) {
+  const attributes = ['aria-label', 'title'];
+  let sourceMap = originalAttributes.get(element);
+  if (!sourceMap) {
+    sourceMap = {};
+    originalAttributes.set(element, sourceMap);
+  }
+  for (const attribute of attributes) {
+    if (!element.hasAttribute(attribute)) continue;
+    if (!(attribute in sourceMap)) sourceMap[attribute] = element.getAttribute(attribute);
+    element.setAttribute(attribute, t(sourceMap[attribute]));
+  }
+}
+
+function translateSubtree(root) {
+  if (!root) return;
+  if (root.nodeType === Node.TEXT_NODE) {
+    translateTextNode(root);
+    return;
+  }
+  if (root.nodeType === Node.ELEMENT_NODE) translateAttributes(root);
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT);
+  let node;
+  while ((node = walker.nextNode())) {
+    if (node.nodeType === Node.TEXT_NODE) translateTextNode(node);
+    else translateAttributes(node);
+  }
+}
+
+function getUI() {
+  return I18N.ui[currentLanguage] || I18N.ui.en;
+}
+
 // The early head script sets the initial theme before the stylesheet is painted.
 const themeButton = document.querySelector('#theme-toggle');
 const themeMedia = window.matchMedia('(prefers-color-scheme: dark)');
@@ -9,24 +66,19 @@ function applyTheme(theme, persist = false) {
   document.documentElement.dataset.theme = theme;
   document.documentElement.style.colorScheme = theme;
   const dark = theme === 'dark';
-  const action = dark ? 'Switch to light theme' : 'Switch to dark theme';
+  const themeCopy = I18N.theme[currentLanguage] || I18N.theme.en;
+  const action = dark ? themeCopy.lightAction : themeCopy.darkAction;
   themeButton.setAttribute('aria-label', action);
   themeButton.setAttribute('title', action);
   themeButton.setAttribute('aria-pressed', String(dark));
-  document.querySelector('#theme-label').textContent = dark ? 'Light' : 'Dark';
+  document.querySelector('#theme-label').textContent = dark ? themeCopy.lightLabel : themeCopy.darkLabel;
   document.querySelector('meta[name="theme-color"]').content = dark ? '#0a100d' : '#f5f8f2';
   if (persist) {
     themeExplicit = true;
     try { localStorage.setItem('portfolio-theme', theme); } catch (_) {}
   }
 }
-applyTheme(document.documentElement.dataset.theme || 'light');
-themeButton.addEventListener('click', () => applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark', true));
-themeMedia.addEventListener('change', event => {
-  if (!themeExplicit) applyTheme(event.matches ? 'dark' : 'light');
-});
 
-// Source and scope are kept explicit for each project.
 const projects = {
   "delivery": {
     "number": "01",
@@ -68,10 +120,71 @@ let activeProject = null;
 let lastTrigger = null;
 let runGeneration = 0;
 
+function visibleProjectCount() {
+  return [...document.querySelectorAll('.project-card')].filter(card => !card.hidden).length;
+}
+
+function updateResultCount() {
+  document.querySelector('.result-count').textContent = getUI().resultCount(visibleProjectCount());
+}
+
+function updateLanguageControl() {
+  const ui = getUI();
+  const label = I18N.labels[currentLanguage];
+  document.querySelector('#language-current').textContent = label.short;
+  const summary = document.querySelector('#language-summary');
+  summary.setAttribute('aria-label', ui.languageLabel);
+  summary.setAttribute('title', ui.languageLabel);
+  const menu = document.querySelector('.language-menu');
+  menu.setAttribute('aria-label', ui.languageLabel);
+  document.querySelectorAll('[data-language]').forEach(button => {
+    const selected = button.dataset.language === currentLanguage;
+    button.setAttribute('aria-checked', String(selected));
+    button.classList.toggle('active', selected);
+  });
+}
+
+function setLanguage(language, persist = true) {
+  if (!I18N.supported.includes(language)) language = 'en';
+  runGeneration++;
+  currentLanguage = language;
+  document.documentElement.lang = language;
+  document.title = I18N.meta[language].title;
+  document.querySelector('meta[name="description"]').content = I18N.meta[language].description;
+  translateSubtree(document.body);
+  updateLanguageControl();
+  updateResultCount();
+  applyTheme(document.documentElement.dataset.theme || 'light');
+  if (persist) {
+    try { localStorage.setItem('portfolio-language', language); } catch (_) {}
+  }
+  if (dialog.open && activeProject) {
+    const selectedTab = document.querySelector('[data-tab][aria-selected="true"]')?.dataset.tab || 'overview';
+    renderProject(activeProject, selectedTab);
+  }
+}
+
+themeButton.addEventListener('click', () => applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark', true));
+themeMedia.addEventListener('change', event => {
+  if (!themeExplicit) applyTheme(event.matches ? 'dark' : 'light');
+});
+
+document.querySelectorAll('[data-language]').forEach(button => {
+  button.addEventListener('click', () => {
+    setLanguage(button.dataset.language, true);
+    document.querySelector('#language-switcher').removeAttribute('open');
+    document.querySelector('#language-summary').focus({preventScroll: true});
+  });
+});
+
+document.addEventListener('click', event => {
+  const picker = document.querySelector('#language-switcher');
+  if (picker.open && !picker.contains(event.target)) picker.removeAttribute('open');
+});
+
 document.querySelectorAll('[data-filter]').forEach(button => {
   button.addEventListener('click', () => {
     const filter = button.dataset.filter;
-    let count = 0;
     document.querySelectorAll('[data-filter]').forEach(item => {
       const selected = item === button;
       item.classList.toggle('active', selected);
@@ -79,9 +192,8 @@ document.querySelectorAll('[data-filter]').forEach(button => {
     });
     document.querySelectorAll('.project-card').forEach(card => {
       card.hidden = filter !== 'all' && card.dataset.category !== filter;
-      if (!card.hidden) count++;
     });
-    document.querySelector('.result-count').textContent = `Showing ${count} project${count === 1 ? '' : 's'}`;
+    updateResultCount();
   });
 });
 
@@ -96,30 +208,47 @@ function selectTab(tab, moveFocus = false) {
   document.querySelector('#try-demo').hidden = tab === 'demo';
 }
 
-function openProject(key, trigger) {
+function renderProject(key, selectedTab = 'overview') {
   const project = projects[key];
-  runGeneration++;
-  activeProject = key;
-  lastTrigger = trigger;
-  document.querySelector('#dialog-number').textContent = `PROJECT ${project.number} / LEARNING LAB`;
-  document.querySelector('#dialog-title').textContent = project.title;
-  document.querySelector('#dialog-stage').textContent = project.stage;
-  document.querySelector('#dialog-subtitle').textContent = project.summary;
+  const ui = getUI();
+  document.querySelector('#dialog-number').textContent = ui.dialogNumber(project.number);
+  document.querySelector('#dialog-title').textContent = t(project.title);
+  document.querySelector('#dialog-stage').textContent = t(project.stage);
+  document.querySelector('#dialog-subtitle').textContent = t(project.summary);
   document.querySelector('#dialog-tags').replaceChildren(...project.technologies.map(technology => {
-    const tag = document.createElement('span'); tag.textContent = technology; return tag;
+    const tag = document.createElement('span');
+    tag.textContent = technology;
+    return tag;
   }));
-  for (const tab of ['overview', 'workflow', 'demo']) document.querySelector(`#panel-${tab}`).innerHTML = project[tab];
+  for (const tab of ['overview', 'workflow', 'demo']) {
+    const panel = document.querySelector(`#panel-${tab}`);
+    panel.innerHTML = project[tab];
+    translateSubtree(panel);
+  }
   const repoSlot = document.querySelector('.repo-slot');
   if (project.repositoryUrl && /^https:\/\/github\.com\/[A-Za-z0-9-]+\/[A-Za-z0-9_.-]+\/?$/.test(project.repositoryUrl)) {
     const link = document.createElement('a');
-    link.href = project.repositoryUrl; link.textContent = 'View GitHub repository ↗';
-    link.target = '_blank'; link.rel = 'noopener noreferrer'; repoSlot.replaceChildren(link);
+    link.href = project.repositoryUrl;
+    link.textContent = ui.repoView;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    repoSlot.replaceChildren(link);
   } else {
-    repoSlot.innerHTML = 'GitHub repository <span>Link to be added</span>';
+    const label = document.createTextNode(`${ui.repoTitle} `);
+    const note = document.createElement('span');
+    note.textContent = ui.repoMissing;
+    repoSlot.replaceChildren(label, note);
   }
-  selectTab('overview');
+  selectTab(selectedTab);
   if (key === 'delivery') document.querySelector('#run-pipeline').addEventListener('click', runPipeline);
   else setupHealthDemo();
+}
+
+function openProject(key, trigger) {
+  runGeneration++;
+  activeProject = key;
+  lastTrigger = trigger;
+  renderProject(key, 'overview');
   dialog.showModal();
   dialog.scrollTop = 0;
   document.body.classList.add('dialog-open');
@@ -158,6 +287,7 @@ document.querySelector('#try-demo').addEventListener('click', () => {
 
 const pause = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
 async function runPipeline() {
+  const ui = getUI();
   const generation = ++runGeneration;
   const runButton = document.querySelector('#run-pipeline');
   const selector = document.querySelector('#pipeline-scenario');
@@ -165,30 +295,38 @@ async function runPipeline() {
   const consoleElement = document.querySelector('#pipeline-console');
   const result = document.querySelector('#pipeline-result');
   const stages = [...document.querySelectorAll('[data-stage]')];
-  runButton.disabled = true; selector.disabled = true;
-  runButton.textContent = 'Simulating…';
-  result.textContent = 'Running the example workflow…';
-  consoleElement.textContent = '$ run-example-workflow\n[SIMULATION] All output below is illustrative.\n';
-  stages.forEach(stage => { stage.className = 'pipeline-stage'; stage.querySelector('span').textContent = 'Waiting'; });
-  const lines = ['✓ Example repository checked out', '✓ Docker image built: devops-docker-demo', '✓ Example container started on localhost:5000', '✓ Local GET /health → 200 {"status":"ok"}'];
+  runButton.disabled = true;
+  selector.disabled = true;
+  runButton.textContent = ui.simulating;
+  result.textContent = ui.pipelineRunning;
+  consoleElement.textContent = ui.pipelineIntro;
+  stages.forEach(stage => {
+    stage.className = 'pipeline-stage';
+    stage.querySelector('span').textContent = ui.waiting;
+  });
   for (let i = 0; i < stages.length; i++) {
     if (generation !== runGeneration || !dialog.open || activeProject !== 'delivery') return;
-    stages[i].classList.add('running'); stages[i].querySelector('span').textContent = 'Running…';
+    stages[i].classList.add('running');
+    stages[i].querySelector('span').textContent = ui.running;
     await pause(window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 80 : 430);
     if (generation !== runGeneration || !dialog.open || activeProject !== 'delivery') return;
     stages[i].classList.remove('running');
     if (fail && i === 1) {
-      stages[i].classList.add('failed'); stages[i].querySelector('span').textContent = 'Failed';
-      stages.slice(2).forEach(stage => stage.querySelector('span').textContent = 'Skipped');
-      consoleElement.textContent += '✗ docker build: dependency installation failed\n— No new image available\n— Container start and local health check skipped\n';
-      result.textContent = 'Example failed: inspect the dependency error and fix the build before running the container. No deployment occurred.';
+      stages[i].classList.add('failed');
+      stages[i].querySelector('span').textContent = ui.failed;
+      stages.slice(2).forEach(stage => stage.querySelector('span').textContent = ui.skipped);
+      consoleElement.textContent += ui.pipelineFailConsole;
+      result.textContent = ui.pipelineFailResult;
       break;
     }
-    stages[i].classList.add('passed'); stages[i].querySelector('span').textContent = 'Passed';
-    consoleElement.textContent += `${lines[i]}\n`;
-    if (i === stages.length - 1) result.textContent = 'Example passed. Image-build CI is followed by illustrative local validation; this demo did not run an actual build or deployment.';
+    stages[i].classList.add('passed');
+    stages[i].querySelector('span').textContent = ui.passed;
+    consoleElement.textContent += `${ui.pipelineLines[i]}\n`;
+    if (i === stages.length - 1) result.textContent = ui.pipelineSuccessResult;
   }
-  runButton.disabled = false; selector.disabled = false; runButton.textContent = 'Run again ▷';
+  runButton.disabled = false;
+  selector.disabled = false;
+  runButton.textContent = ui.runAgain;
 }
 
 function setupHealthDemo() {
@@ -199,24 +337,37 @@ function setupHealthDemo() {
   const result = document.querySelector('#health-result');
   const output = document.querySelector('#health-console');
   function refreshInputs(custom = true) {
+    const ui = getUI();
     document.querySelector('#memory-output').textContent = `${memory.value}%`;
     document.querySelector('#disk-output').textContent = `${disk.value}%`;
-    if (custom) { scenario.querySelector('[value="custom"]').hidden = false; scenario.value = 'custom'; }
-    output.textContent = '$ ./health-check.sh\nInputs changed. Run a check to generate a new report.';
-    result.textContent = 'Inputs updated. Previous results have been cleared.';
+    if (custom) {
+      scenario.querySelector('[value="custom"]').hidden = false;
+      scenario.value = 'custom';
+    }
+    output.textContent = ui.healthChangedConsole;
+    result.textContent = ui.healthChangedResult;
   }
   [memory, disk, service].forEach(input => input.addEventListener('input', () => refreshInputs()));
   scenario.addEventListener('change', () => {
     if (scenario.value === 'custom') return;
-    memory.value = '42'; disk.value = scenario.value === 'disk' ? '92' : '38';
-    service.checked = scenario.value !== 'service'; refreshInputs(false);
+    memory.value = '42';
+    disk.value = scenario.value === 'disk' ? '92' : '38';
+    service.checked = scenario.value !== 'service';
+    refreshInputs(false);
   });
   document.querySelector('#run-health').addEventListener('click', () => {
+    const ui = getUI();
     const memoryWarn = Number(memory.value) >= 80;
     const diskWarn = Number(disk.value) >= 80;
     const serviceWarn = !service.checked;
     const warnings = [memoryWarn, diskWarn, serviceWarn].filter(Boolean).length;
-    output.textContent = `$ ./health-check.sh\n[SIMULATION] Sample inputs; no system access\n${memoryWarn ? '[WARN]' : '[OK]  '} Memory usage: ${memory.value}% (threshold: 80%)\n${diskWarn ? '[WARN]' : '[OK]  '} Root disk usage: ${disk.value}% (threshold: 80%)\n${serviceWarn ? '[WARN]' : '[OK]  '} Example service: ${service.checked ? 'active' : 'inactive'}\n\n${warnings ? `${warnings} warning${warnings > 1 ? 's' : ''} found` : 'All checks passed'} · exit code ${warnings ? '1' : '0'}`;
-    result.textContent = warnings ? `Example report: ${warnings} warning${warnings > 1 ? 's' : ''}. ${diskWarn ? 'Investigate disk usage. ' : ''}${memoryWarn ? 'Investigate memory usage. ' : ''}${serviceWarn ? 'Inspect service logs and configuration.' : ''}` : 'Example report: all checks are healthy. Exit code 0 can signal success to another script.';
+    output.textContent = `$ ./health-check.sh\n${ui.healthSimulation}\n${memoryWarn ? '[WARN]' : '[OK]  '} ${ui.healthMemory}: ${memory.value}% (${ui.threshold}: 80%)\n${diskWarn ? '[WARN]' : '[OK]  '} ${ui.healthDisk}: ${disk.value}% (${ui.threshold}: 80%)\n${serviceWarn ? '[WARN]' : '[OK]  '} ${ui.healthService}: ${service.checked ? ui.active : ui.inactive}\n\n${warnings ? ui.warningsFound(warnings) : ui.allPassed} · ${ui.exitCode} ${warnings ? '1' : '0'}`;
+    result.textContent = warnings
+      ? `${ui.healthWarningPrefix(warnings)}${diskWarn ? ui.investigateDisk : ''}${memoryWarn ? ui.investigateMemory : ''}${serviceWarn ? ui.inspectService : ''}`
+      : ui.healthHealthy;
   });
 }
+
+// Translate the static English source once the DOM is ready, then keep all UI state localized.
+setLanguage(currentLanguage, false);
+applyTheme(document.documentElement.dataset.theme || 'light');
