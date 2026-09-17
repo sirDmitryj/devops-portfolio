@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f8f5">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Dmytro Poliakov — aspiring Junior DevOps engineer, AWS Certified Cloud Practitioner and Computer Science student. Explore Docker CI, Linux practice and an operations background.">
+  <title>Dmytro Poliakov — Junior DevOps Portfolio</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <script id="theme-init">
+    (() => {
+      let saved;
+      try { saved = localStorage.getItem('portfolio-theme'); } catch (_) {}
+      const theme = saved === 'dark' || saved === 'light' ? saved : (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.dataset.theme = theme;
+      document.documentElement.style.colorScheme = theme;
+    })();
+  </script>
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./theme.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="identity" href="#top" aria-label="Dmytro Poliakov, home"><span class="monogram">dp<span>.</span></span><span class="identity-name">Dmytro Poliakov<span>JUNIOR DEVOPS PORTFOLIO</span></span></a>
+      <nav aria-label="Main navigation"><a href="#projects">Projects <span class="nav-count">02</span></a><a href="#about">About me</a><a class="linkedin-nav" href="https://www.linkedin.com/in/dmytro-poliakov-184911276/" target="_blank" rel="noopener noreferrer">LinkedIn <span aria-hidden="true">↗</span></a></nav>
+      <button type="button" class="theme-toggle" id="theme-toggle" aria-label="Switch to dark theme" aria-pressed="false" title="Switch to dark theme"><svg class="moon-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.1 15.6A8.5 8.5 0 0 1 8.4 3.9 8.5 8.5 0 1 0 20.1 15.6Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg><svg class="sun-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.4 1.4m11.2 11.2L19 19M5 19l1.4-1.4M17.6 6.4 19 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span id="theme-label">Dark</span></button>
+    </div>
+  </header>
+  <main id="main">
+    <section class="hero container" id="top" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="green-dot"></span> KRAKÓW, POLAND <span class="slash">/</span> OPEN TO JUNIOR ROLES</div>
+        <h1 id="hero-title">Small projects.<br><span>Solid foundations.</span></h1>
+        <p class="hero-description">I’m Dmytro, a computer science student and AWS Certified Cloud Practitioner, building toward my first DevOps role.</p>
+        <p class="hero-subtext">Hands-on with Linux, Docker, Git, and CI. Bringing an operations mindset from my work at Accenture.</p>
+        <div class="hero-actions"><a class="primary-button" href="#projects">Explore my projects <span aria-hidden="true">↘</span></a><a class="hero-connect" href="https://www.linkedin.com/in/dmytro-poliakov-184911276/" target="_blank" rel="noopener noreferrer">Let’s connect <span aria-hidden="true">↗</span></a></div>
+        <div class="hero-footnote"><span class="mini-terminal" aria-hidden="true">✓</span> AWS CERTIFIED CLOUD PRACTITIONER <span class="cert-code">CLF-C02</span></div>
+      </div>
+      <div class="hero-art" role="img" aria-label="Illustrative workflow: code, build, run, observe. A learning loop, not a live deployment.">
+        <div class="art-grid"></div>
+        <div class="art-caption"><span class="green-dot"></span> THE LEARNING LOOP <span>01 — 04</span></div>
+        <svg class="art-wires" viewBox="0 0 480 360" fill="none" aria-hidden="true"><path d="M118 101H339V260H118V101Z" stroke="#bad5c9" stroke-width="1.5" stroke-dasharray="5 5"/><path d="M228 101h22m-5-5 5 5-5 5M339 174v22m-5-5 5 5 5-5M235 260h-22m5-5-5 5 5 5M118 193v-22m-5 5 5-5 5 5" stroke="#44826a" stroke-width="1.5"/></svg>
+        <div class="art-node code-node"><span class="node-icon">&lt;/&gt;</span><span><small>01 / START SMALL</small><strong>Code</strong><em>Python + Git</em></span></div>
+        <div class="art-node test-node"><span class="node-icon">✓</span><span><small>02 / MAKE REPEATABLE</small><strong>Build</strong><em>Docker image</em></span></div>
+        <div class="art-node observe-node"><span class="node-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M3 13h4l3-7 4 13 3-6h4" stroke="currentColor" stroke-width="1.8"/></svg></span><span><small>04 / UNDERSTAND</small><strong>Observe</strong><em>Linux health checks</em></span></div>
+        <div class="art-node container-node"><span class="node-icon"><svg viewBox="0 0 24 24" fill="none"><path d="m12 3 9 5v9l-9 5-9-5V8l9-5Zm0 10 9-5M12 13 3 8m9 5v9M7.5 5.5l9 5" stroke="currentColor" stroke-width="1.5"/></svg></span><span><small>03 / RUN LOCALLY</small><strong>Run</strong><em>Flask container</em></span></div>
+        <div class="loop-center"><span>↻</span>build. learn. repeat.</div>
+        <div class="art-bottom"><span>~/devops-learning</span><span>progress &gt; perfection</span></div>
+      </div>
+    </section>
+    <div class="tech-strip"><div class="container"><span class="tech-label">MY LEARNING TOOLKIT</span><span>Linux</span><span>Docker</span><span>AWS</span><span>Python</span><span>Bash</span><span>GitHub Actions</span></div></div>
+    <section class="projects-section container" id="projects" aria-labelledby="projects-title">
+      <div class="section-top"><div><div class="eyebrow section-index">01 / PROJECT LAB</div><h2 id="projects-title">From concepts to practice<span>.</span></h2><p>A Docker project with source code, and a Linux practice lab. Explore the implementation and try the demos.</p></div><span class="project-total">02 FEATURED</span></div>
+      <div class="project-toolbar"><div class="filters" role="group" aria-label="Filter projects"><button class="filter active" data-filter="all" aria-pressed="true">All projects <span>2</span></button><button class="filter" data-filter="delivery" aria-pressed="false">Containers &amp; CI</button><button class="filter" data-filter="linux" aria-pressed="false">Linux practice</button></div><span class="result-count" aria-live="polite">Showing 2 projects</span></div>
+      <div class="project-grid">
+        <article class="project-card" data-category="delivery">
+          <div class="project-visual pipeline-preview"><div class="preview-header"><span><span class="green-dot"></span> DELIVERY WORKFLOW</span><span>ILLUSTRATIVE</span></div><div class="pipeline-flow" aria-label="Code to build to run to health check"><div><span class="flow-icon">&lt;/&gt;</span><b>Code</b></div><i aria-hidden="true">→</i><div><span class="flow-icon">✓</span><b>Build</b></div><i aria-hidden="true">→</i><div><span class="flow-icon">▧</span><b>Run</b></div><i aria-hidden="true">→</i><div><span class="flow-icon">▷</span><b>Check</b></div></div><div class="preview-bottom"><code>git push <span>→</span> Docker image build</code><span class="sample-badge">LEARNING LAB</span></div></div>
+          <div class="card-body"><div class="card-topline"><span>PROJECT 01</span><span class="project-stage implemented">Personal project · code available</span></div><h3>Dockerized Python app &amp; CI</h3><p>A Flask service with a /health endpoint, packaged with Docker. GitHub Actions builds the image on pushes and pull requests to main.</p><div class="tags"><span>Python</span><span>Flask</span><span>Docker</span><span>GitHub Actions</span></div><div class="card-bottom"><button class="detail-button" data-project="delivery">Explore project <span aria-hidden="true">↗</span></button><a class="repo-link" href="https://github.com/sirDmitryj/devops-docker-ci-demo" target="_blank" rel="noopener noreferrer">View source <span aria-hidden="true">↗</span></a></div></div>
+        </article>
+        <article class="project-card" data-category="linux">
+          <div class="project-visual terminal-preview"><div class="preview-header"><span class="terminal-title"><span class="terminal-dots"><i></i><i></i><i></i></span>health-check.sh</span><span>EXAMPLE OUTPUT</span></div><div class="terminal-lines"><div><span class="prompt">$</span> ./health-check.sh</div><div><span class="ok">[OK]</span> <span>Memory usage</span><b>42%</b></div><div><span class="ok">[OK]</span> <span>Disk usage</span><b>38%</b></div><div><span class="ok">[OK]</span> <span>Service status</span><b>active</b></div><div class="terminal-summary"><span class="ok">✓</span> All checks passed <span class="cursor" aria-hidden="true"></span></div></div></div>
+          <div class="card-body"><div class="card-topline"><span>PROJECT 02</span><span class="project-stage">Hands-on practice</span></div><h3>Linux operations lab</h3><p>Daily Fedora use, service troubleshooting, and system configuration. An interactive lab shows how memory, disk, and service checks fit together.</p><div class="tags"><span>Linux</span><span>Bash</span><span>systemd</span><span>Shell scripting</span></div><div class="card-bottom"><button class="detail-button" data-project="linux">Explore project <span aria-hidden="true">↗</span></button><span class="repo-placeholder">Interactive learning lab</span></div></div>
+        </article>
+      </div>
+      <div class="honesty-note"><span aria-hidden="true">i</span><p>The Docker project links to real source code. All interactive demos use illustrative data; they do not run containers or inspect a live system.</p></div>
+      <aside class="additional-project" aria-labelledby="rag-title"><div class="rag-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M6 3h8l4 4v14H6V3Zm8 0v5h4M9 12h6m-6 4h6" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></div><div><span class="eyebrow">ADDITIONAL PROJECT / RAG PROTOTYPE</span><h3 id="rag-title">Context-aware document assistant</h3><p>A Python prototype for PDF question answering: document chunking, vector embeddings, semantic retrieval, and API-based LLM integration.</p><div class="tags"><span>Python</span><span>LangChain</span><span>ChromaDB</span></div></div><span class="additional-status">Prototype<br>Repository not linked</span></aside>
+    </section>
+    <section class="about-section" id="about" aria-labelledby="about-title">
+      <div class="container">
+        <div class="about-grid">
+          <div class="about-intro"><div class="eyebrow section-index">02 / BACKGROUND &amp; SKILLS</div><h2 id="about-title">Operations mindset.<br>DevOps direction.</h2><p class="about-lead">I like understanding how systems work—and figuring out what to check when they don’t.</p><p class="about-lead">My professional experience is in data operations. My DevOps experience comes from personal projects, self-study, and daily Linux practice.</p><div class="credential"><span class="credential-icon" aria-hidden="true">✓</span><div><span>CERTIFICATION</span><strong>AWS Certified Cloud Practitioner</strong><small>CLF-C02</small></div></div><div class="contact-links"><a class="text-link" href="https://www.linkedin.com/in/dmytro-poliakov-184911276/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a><a class="text-link" href="https://github.com/sirDmitryj" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div>
+          <div class="experience-list"><article class="experience-item"><div class="experience-meta"><span>ACCENTURE</span><span>2023 — PRESENT</span></div><h3>Junior Data Analyst</h3><span class="experience-subtitle">Content, Policy &amp; Operations · Kraków</span><p>Investigating issues, maintaining data quality, and escalating operational problems in a high-volume, SLA-driven environment. Working with cross-functional teams under time pressure.</p></article><article class="experience-item"><div class="experience-meta"><span>EDUCATION</span><span>2022 — PRESENT</span></div><h3>Computer Science</h3><span class="experience-subtitle">WSZiB Kraków · Bachelor’s degree in progress</span><p>Building a foundation in systems, networks, and software while developing practical infrastructure skills through self-study.</p></article><div class="earlier-experience"><span>EARLIER EXPERIENCE</span><p><strong>Restaurant Assistant Manager · 2014–2023</strong><br>Daily operations, staff scheduling, supplier coordination, and team ownership.</p></div></div>
+        </div>
+        <div class="skills-grid"><article class="skill-group"><div class="skill-heading"><span aria-hidden="true">&gt;_</span><h3>Hands-on practice</h3></div><p>Used in personal projects or daily work with my own systems.</p><div class="tags"><span>Linux / Fedora</span><span>Docker</span><span>Git &amp; GitHub</span><span>GitHub Actions</span><span>Bash</span><span>Python</span></div></article><article class="skill-group"><div class="skill-heading"><span aria-hidden="true">{ }</span><h3>Foundational knowledge</h3></div><p>Early hands-on exposure and concepts I’m continuing to develop.</p><div class="tags"><span>AWS</span><span>Azure</span><span>Kubernetes</span><span>Terraform</span><span>Windows Server</span><span>Networking</span></div></article><article class="skill-group"><div class="skill-heading"><span aria-hidden="true">↗</span><h3>How I work</h3></div><p>Troubleshooting, clear documentation, ownership, and cross-team communication.</p><div class="language-list"><span>English &amp; Polish <b>Fluent</b></span><span>Ukrainian &amp; Russian <b>Native</b></span></div></article></div>
+      </div>
+    </section>
+  </main>
+  <footer class="container site-footer"><a class="footer-name" href="#top">dp<span>.</span> <span>Dmytro Poliakov</span></a><span>Built with curiosity. Kept honest.</span><a href="#top">Back to top ↑</a></footer>
+  <dialog id="project-dialog" aria-labelledby="dialog-title"><div class="dialog-shell"><div class="dialog-top"><span id="dialog-number" class="eyebrow"></span><button class="close-dialog" aria-label="Close project details">×</button></div><div class="dialog-heading"><span class="project-stage" id="dialog-stage"></span><h2 id="dialog-title"></h2><p id="dialog-subtitle"></p><div id="dialog-tags" class="tags"></div></div><div class="detail-tabs" role="tablist" aria-label="Project details"><button role="tab" id="tab-overview" data-tab="overview" aria-selected="true" aria-controls="panel-overview">Overview</button><button role="tab" id="tab-workflow" data-tab="workflow" aria-selected="false" aria-controls="panel-workflow" tabindex="-1">Workflow</button><button role="tab" id="tab-demo" data-tab="demo" aria-selected="false" aria-controls="panel-demo" tabindex="-1">Interactive demo <span>↗</span></button></div><div class="dialog-content"><div role="tabpanel" id="panel-overview" aria-labelledby="tab-overview" tabindex="0"></div><div role="tabpanel" id="panel-workflow" aria-labelledby="tab-workflow" tabindex="0" hidden></div><div role="tabpanel" id="panel-demo" aria-labelledby="tab-demo" tabindex="0" hidden></div></div><div class="dialog-footer"><span class="repo-slot">GitHub repository <span>Link to be added</span></span><button class="secondary-button" id="try-demo">Try the demo →</button></div></div></dialog>
+  <noscript><p class="noscript-message">Enable JavaScript to use project filters, detail views, and interactive demos. Project summaries and background are available above.</p></noscript>
+</body>
+</html>
